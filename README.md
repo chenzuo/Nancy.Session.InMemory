@@ -1,3 +1,6 @@
+# In developement as for now. Not ready for use.
+================================================
+
 Nancy.Session.InMemory
 ======================
 

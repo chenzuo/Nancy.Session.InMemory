@@ -1,0 +1,20 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<title>Sesion Testing</title>
+	</head>
+	<body>
+		@If.HasMessage
+			<div>This session has a message: @Model.Message</div>
+		@EndIf
+		@IfNot.HasMessage
+			<div>This session has no message</div>
+		@EndIf
+		<form method="post" action="/">
+			<div>
+				<input name="message"></input>
+				<button type="submit">Set Message</button>
+			</div>
+		</form>
+	</body>
+</html>
