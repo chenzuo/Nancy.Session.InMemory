@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Linq;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Runtime.Caching;
 using Nancy.Bootstrapper;
+using System.Collections.Generic;
 
-//TODO: check if possible to set cache item value to NULL
-//TODO: check removal of cache item
 //TODO: check cache item expiration time
 namespace Nancy.Session.InMemory {
     /// <summary>
@@ -73,8 +74,7 @@ namespace Nancy.Session.InMemory {
         /// <param name="response">Response to save into</param>
         public void Save(Request request, Response response) {
             var session = request.Session;
-            if (session == null || !session.HasChanged) { return; }
-
+            if (!session.HasChanged) { return; }
             string id;
             if (request.Cookies.ContainsKey(cookieName)) {
                 id = request.Cookies[cookieName];
@@ -84,9 +84,11 @@ namespace Nancy.Session.InMemory {
             }
 
             var cache = storage.GetOrAdd(id, new MemoryCache(id));
-            foreach (var kvp in session) {
-                if (cache.Contains(kvp.Key)) { cache.Remove(kvp.Key); }
-                cache.Add(kvp.Key, kvp.Value, DateTime.Now.Add(entrySpan));
+            var removalList = cache.Except(session.Except(session)).ToList();
+            foreach (var item in removalList) { cache.Remove(item.Key); }
+            foreach (var item in session) {
+                if (cache.Contains(item.Key)) { cache.Remove(item.Key); }
+                cache.Add(item.Key, item.Value, DateTime.Now.Add(entrySpan));
             }
         }
 

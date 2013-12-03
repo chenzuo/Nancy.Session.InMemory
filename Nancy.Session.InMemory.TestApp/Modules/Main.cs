@@ -22,7 +22,11 @@ namespace Nancy.Session.InMemory {
 
         dynamic OnPostMain(dynamic args) {
             var message = Request.Form.message;
-            if (message.HasValue && !string.IsNullOrWhiteSpace(message)) { Session["Message"] = message.Value; }
+            if (message.HasValue && !string.IsNullOrWhiteSpace(message)) {
+                Session["Message"] = message.Value;
+            } else {
+                Session.Delete("Message");
+            }
             return Response.AsRedirect("~/");
         }
     }
